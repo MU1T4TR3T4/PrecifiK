@@ -86,12 +86,12 @@ export default function ProductBuilder() {
 
             <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
                 <h4 style={{ marginBottom: '0.5rem' }}>Adicionar Insumos</h4>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
                     <select
                         value={currentIngredientId}
                         onChange={(e) => setCurrentIngredientId(e.target.value)}
                         className="input-field"
-                        style={{ marginBottom: 0 }}
+                        style={{ marginBottom: 0, flex: '1 1 200px', minWidth: '150px' }}
                     >
                         <option value="">Selecione um insumo...</option>
                         {ingredients.map(ing => (
@@ -104,9 +104,9 @@ export default function ProductBuilder() {
                         onChange={(e) => setCurrentQuantity(e.target.value)}
                         className="input-field"
                         placeholder="Qtd (g/ml/un)"
-                        style={{ marginBottom: 0, width: '150px' }}
+                        style={{ marginBottom: 0, flex: '0 1 150px', minWidth: '100px' }}
                     />
-                    <button type="button" onClick={handleAddIngredient} className="btn-primary">
+                    <button type="button" onClick={handleAddIngredient} className="btn-primary" style={{ flex: '0 0 auto' }}>
                         +
                     </button>
                 </div>
@@ -127,7 +127,7 @@ export default function ProductBuilder() {
                 )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="form-grid-2">
                 <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem' }}>Custo Mão de Obra (R$)</label>
                     <input

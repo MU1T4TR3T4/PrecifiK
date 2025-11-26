@@ -3,6 +3,7 @@ import { IngredientProvider } from '@/contexts/IngredientContext';
 import { ProductProvider } from '@/contexts/ProductContext';
 import { FixedCostProvider } from '@/contexts/FixedCostContext';
 
+
 export default function DashboardLayout({
     children,
 }: {
@@ -19,7 +20,8 @@ export default function DashboardLayout({
                             padding: '2rem',
                             width: 'calc(100% - 250px)',
                             minHeight: '100vh'
-                        }}>
+                        }}
+                            className="dashboard-main">
                             {children}
                         </main>
                     </div>

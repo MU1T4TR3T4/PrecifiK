@@ -34,7 +34,7 @@ export default function FixedCostsPage() {
         <div>
             <h1 style={{ marginBottom: '1.5rem' }}>Custos Fixos Mensais</h1>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
                 <div className="card">
                     <h3 style={{ marginBottom: '1rem' }}>Adicionar Despesa</h3>

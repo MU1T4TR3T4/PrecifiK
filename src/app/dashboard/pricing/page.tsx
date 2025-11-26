@@ -12,7 +12,7 @@ export default function PricingPage() {
         <div>
             <h1 style={{ marginBottom: '1.5rem' }}>Motor de Precificação</h1>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem', alignItems: 'start' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div className="card">
                     <h3 style={{ marginBottom: '1rem' }}>Selecione um Produto</h3>
                     {products.length === 0 ? (
@@ -52,7 +52,7 @@ export default function PricingPage() {
                         </div>
                     ) : (
                         <div className="card" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
-                            <p>Selecione um produto ao lado para ver a análise de preço.</p>
+                            <p>Selecione um produto acima para ver a análise de preço.</p>
                         </div>
                     )}
                 </div>

@@ -31,8 +31,10 @@ export default function ProductList() {
     return (
         <div className="card">
             <h3 style={{ marginBottom: '1rem' }}>Seus Produtos</h3>
+
+            {/* Desktop Table View */}
             <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <table className="desktop-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
                         <tr style={{ borderBottom: '1px solid var(--border)' }}>
                             <th style={{ padding: '0.75rem' }}>Nome</th>
@@ -68,6 +70,46 @@ export default function ProductList() {
                         })}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="mobile-card-list">
+                {products.map((product) => {
+                    const cost = calculateCost(product);
+                    const suggested = cost * (1 + (product.profitMargin / 100));
+
+                    return (
+                        <div key={product.id} className="mobile-card-item">
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Nome</span>
+                                <span className="mobile-card-value">{product.name}</span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Custo Total</span>
+                                <span className="mobile-card-value">R$ {cost.toFixed(2)}</span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Margem</span>
+                                <span className="mobile-card-value">{product.profitMargin}%</span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Preço Sugerido</span>
+                                <span className="mobile-card-value" style={{ fontWeight: 'bold', color: 'var(--primary)' }}>
+                                    R$ {suggested.toFixed(2)}
+                                </span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <button
+                                    onClick={() => removeProduct(product.id)}
+                                    className="btn-primary"
+                                    style={{ width: '100%', marginTop: '0.5rem', backgroundColor: '#dc3545' }}
+                                >
+                                    Excluir
+                                </button>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

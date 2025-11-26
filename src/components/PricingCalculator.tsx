@@ -43,7 +43,7 @@ export default function PricingCalculator({ product }: { product: any }) {
         <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
             <h4 style={{ marginBottom: '1rem' }}>Análise de Precificação: {product.name}</h4>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div className="form-grid-2" style={{ marginBottom: '1rem' }}>
                 <div>
                     <label style={{ display: 'block', fontSize: '0.9rem' }}>Impostos (%)</label>
                     <input type="number" value={taxRate} onChange={e => setTaxRate(Number(e.target.value))} className="input-field" />

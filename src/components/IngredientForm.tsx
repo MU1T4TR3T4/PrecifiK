@@ -41,7 +41,7 @@ export default function IngredientForm() {
                     />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-grid-2">
                     <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem' }}>Unidade de Compra</label>
                         <select

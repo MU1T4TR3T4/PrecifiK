@@ -16,8 +16,10 @@ export default function IngredientList() {
     return (
         <div className="card">
             <h3 style={{ marginBottom: '1rem' }}>Insumos Cadastrados</h3>
+
+            {/* Desktop Table View */}
             <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <table className="desktop-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
                         <tr style={{ borderBottom: '1px solid var(--border)' }}>
                             <th style={{ padding: '0.75rem' }}>Nome</th>
@@ -54,6 +56,47 @@ export default function IngredientList() {
                         })}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="mobile-card-list">
+                {ingredients.map((ing) => {
+                    let baseUnit = 'g';
+                    if (ing.unit === 'l') baseUnit = 'ml';
+                    if (ing.unit === 'un') baseUnit = 'un';
+
+                    return (
+                        <div key={ing.id} className="mobile-card-item">
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Nome</span>
+                                <span className="mobile-card-value">{ing.name}</span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Compra</span>
+                                <span className="mobile-card-value">{ing.quantity} {ing.unit}</span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Preço Pago</span>
+                                <span className="mobile-card-value">R$ {ing.price.toFixed(2)}</span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Custo Base</span>
+                                <span className="mobile-card-value" style={{ fontWeight: 'bold', color: 'var(--primary)' }}>
+                                    R$ {ing.pricePerBaseUnit.toFixed(4)} / {baseUnit}
+                                </span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <button
+                                    onClick={() => removeIngredient(ing.id)}
+                                    className="btn-primary"
+                                    style={{ width: '100%', marginTop: '0.5rem', backgroundColor: '#dc3545' }}
+                                >
+                                    Excluir
+                                </button>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
