@@ -13,6 +13,12 @@ export default function PricingCalculator({ product }: { product: any }) {
     const [deliveryFee, setDeliveryFee] = useState(0); // 0% default
     const [desiredProfit, setDesiredProfit] = useState(product.profitMargin || 20);
 
+    // AI states
+    const [isLoadingAI, setIsLoadingAI] = useState(false);
+    const [aiResponse, setAiResponse] = useState<any>(null);
+    const [showAIModal, setShowAIModal] = useState(false);
+    const [aiError, setAiError] = useState<string | null>(null);
+
     // Calculate Variable Cost
     let variableCost = 0;
     product.ingredients.forEach((item: any) => {
@@ -25,19 +31,51 @@ export default function PricingCalculator({ product }: { product: any }) {
     variableCost += product.packagingCost || 0;
 
     // Pricing Logic
-    // Price = (Variable Cost + Fixed Cost) / (1 - (Tax + Card + Delivery + Profit))
-    // Note: Percentages should be in decimal (e.g., 0.04)
-
     const totalDeductions = (taxRate + cardFee + deliveryFee + desiredProfit) / 100;
-
-    // Safety check to avoid division by zero or negative
     const divisor = 1 - totalDeductions;
     const recommendedPrice = divisor > 0 ? (variableCost + costPerSale) / divisor : 0;
 
-    const minPrice = variableCost + costPerSale; // Break-even (0 profit, 0 taxes? No, taxes apply on revenue)
-    // Actually Break-even Price = (Variable + Fixed) / (1 - (Tax + Card + Delivery))
     const breakEvenDivisor = 1 - ((taxRate + cardFee + deliveryFee) / 100);
     const breakEvenPrice = breakEvenDivisor > 0 ? (variableCost + costPerSale) / breakEvenDivisor : 0;
+
+    // AI Analysis Function
+    const handleAIAnalysis = async () => {
+        setIsLoadingAI(true);
+        setAiError(null);
+
+        try {
+            const response = await fetch('/api/ai/pricing', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productName: product.name,
+                    variableCost,
+                    fixedCost: costPerSale,
+                    taxRate,
+                    cardFee,
+                    deliveryFee,
+                    desiredProfit,
+                    recommendedPrice
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Erro ao obter análise da IA');
+            }
+
+            setAiResponse(data.data);
+            setShowAIModal(true);
+        } catch (error: any) {
+            console.error('AI Analysis Error:', error);
+            setAiError(error.message || 'Erro ao conectar com a IA. Tente novamente.');
+        } finally {
+            setIsLoadingAI(false);
+        }
+    };
 
     return (
         <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
@@ -85,15 +123,97 @@ export default function PricingCalculator({ product }: { product: any }) {
             <div style={{ marginTop: '1.5rem', borderTop: '1px solid #ddd', paddingTop: '1rem' }}>
                 <button
                     className="btn-primary"
-                    style={{ width: '100%', background: 'linear-gradient(45deg, #EA1D2C, #ff4b59)' }}
-                    onClick={() => alert('Analisando mercado e concorrentes...\n\nSugestão IA:\nPreço Ideal: R$ ' + (recommendedPrice * 0.95).toFixed(2) + '\nProbabilidade de Venda: Alta (85%)\nSugestão: Crie um combo com Bebida para aumentar o ticket médio em 15%.')}
+                    style={{
+                        width: '100%',
+                        background: isLoadingAI ? '#ccc' : 'linear-gradient(45deg, #EA1D2C, #ff4b59)',
+                        cursor: isLoadingAI ? 'not-allowed' : 'pointer'
+                    }}
+                    onClick={handleAIAnalysis}
+                    disabled={isLoadingAI}
                 >
-                    ✨ Calcular Melhor Preço (IA)
+                    {isLoadingAI ? '🔄 Analisando...' : '✨ Calcular Melhor Preço (IA)'}
                 </button>
                 <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', textAlign: 'center' }}>
                     Baseado em análise de concorrentes e comportamento de compra.
                 </p>
+                {aiError && (
+                    <p style={{ fontSize: '0.9rem', color: '#d32f2f', marginTop: '0.5rem', textAlign: 'center' }}>
+                        ⚠️ {aiError}
+                    </p>
+                )}
             </div>
+
+            {/* AI Response Modal */}
+            {showAIModal && aiResponse && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 9999,
+                    padding: '1rem'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: '12px',
+                        padding: '2rem',
+                        maxWidth: '500px',
+                        width: '100%',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                    }}>
+                        <h3 style={{ marginBottom: '1rem', color: 'var(--primary)' }}>✨ Análise da IA</h3>
+
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <div style={{
+                                padding: '1rem',
+                                backgroundColor: '#e6f7ff',
+                                borderRadius: '8px',
+                                marginBottom: '1rem'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                    <span style={{ fontWeight: 'bold' }}>Preço Sugerido pela IA:</span>
+                                    <span style={{ fontSize: '1.3rem', color: 'var(--primary)', fontWeight: 'bold' }}>
+                                        R$ {Number(aiResponse.precoSugerido).toFixed(2)}
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span style={{ fontWeight: 'bold' }}>Probabilidade de Venda:</span>
+                                    <span style={{
+                                        fontWeight: 'bold',
+                                        color: aiResponse.probabilidadeVenda === 'Alta' ? '#52c41a' :
+                                            aiResponse.probabilidadeVenda === 'Média' ? '#faad14' : '#f5222d'
+                                    }}>
+                                        {aiResponse.probabilidadeVenda}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div style={{ marginBottom: '1rem' }}>
+                                <strong>Análise:</strong>
+                                <p style={{ marginTop: '0.5rem', color: '#666' }}>{aiResponse.analise}</p>
+                            </div>
+
+                            <div>
+                                <strong>💡 Sugestão Estratégica:</strong>
+                                <p style={{ marginTop: '0.5rem', color: '#666' }}>{aiResponse.sugestaoEstrategica}</p>
+                            </div>
+                        </div>
+
+                        <button
+                            className="btn-primary"
+                            style={{ width: '100%' }}
+                            onClick={() => setShowAIModal(false)}
+                        >
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

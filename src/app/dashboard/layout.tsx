@@ -1,4 +1,5 @@
 import Sidebar from '@/components/Sidebar';
+import AIAssistantChat from '@/components/AIAssistantChat';
 import { IngredientProvider } from '@/contexts/IngredientContext';
 import { ProductProvider } from '@/contexts/ProductContext';
 import { FixedCostProvider } from '@/contexts/FixedCostContext';
@@ -25,6 +26,8 @@ export default function DashboardLayout({
                             {children}
                         </main>
                     </div>
+                    {/* AI Assistant Chat - Available on all pages */}
+                    <AIAssistantChat />
                 </FixedCostProvider>
             </ProductProvider>
         </IngredientProvider>
