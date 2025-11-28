@@ -20,6 +20,13 @@ export default function LoginPage() {
         setLoading(true);
         setError(null);
 
+        // Debug: Check env vars
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            setError('Erro de configuração: Variáveis de ambiente do Supabase não encontradas.');
+            setLoading(false);
+            return;
+        }
+
         try {
             if (isSignUp) {
                 const { error } = await supabase.auth.signUp({
@@ -41,10 +48,14 @@ export default function LoginPage() {
                     password,
                 });
                 if (error) throw error;
-                router.push('/dashboard');
+
+                // Force a router refresh to ensure middleware sees the new session
+                router.refresh();
+                router.replace('/dashboard');
             }
         } catch (err: any) {
-            setError(err.message);
+            console.error('Auth error:', err);
+            setError(err.message || 'Ocorreu um erro durante a autenticação.');
         } finally {
             setLoading(false);
         }
