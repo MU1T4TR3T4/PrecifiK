@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -135,7 +136,15 @@ export default function Sidebar() {
                     alignItems: 'center',
                     marginBottom: '2rem'
                 }}>
-                    <h2 style={{ color: 'var(--primary)', margin: 0 }}>PrecifiK</h2>
+                    <div style={{ position: 'relative', width: '100%', height: '60px' }}>
+                        <Image
+                            src="/logo/logo precifik.png"
+                            alt="PrecifiK Logo"
+                            fill
+                            style={{ objectFit: 'contain', objectPosition: 'left' }}
+                            priority
+                        />
+                    </div>
 
                     {/* Close button - Only visible on mobile */}
                     {isMobile && (
